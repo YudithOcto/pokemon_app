@@ -1,0 +1,8 @@
+{
+  "form_name":"plant",
+  "name":"wormadam-plant",
+  "message": null,
+  "sprites":{
+    "front_default":"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/413-plant.png"
+  }
+}
