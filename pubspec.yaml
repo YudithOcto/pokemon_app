@@ -3,7 +3,7 @@ description: Pokemon with list and detail
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -12,6 +12,8 @@ dependencies:
   dio: ^3.0.9
   get_it: ^4.0.2
   equatable: ^1.2.2
+  provider: ^3.2.0
+  palette_generator: ^0.2.2
 
 dev_dependencies:
   flutter_test:
@@ -25,3 +27,7 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Rodina
+      fonts:
+        - asset: fonts/Rodina.ttf

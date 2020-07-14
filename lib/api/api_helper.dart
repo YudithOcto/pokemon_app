@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pokemon_app/helper/constant.dart';
+import 'package:pokemon_app/utils/constant.dart';
 import 'package:pokemon_app/model/pokemon_form_response_model.dart';
 import 'package:pokemon_app/model/pokemon_list_response_model.dart';
 
@@ -21,7 +21,10 @@ class ApiHelperImpl extends ApiHelper {
       ..options
       ..options.receiveTimeout = 20000
       ..options.connectTimeout = 20000
-      ..interceptors.add(InterceptorsWrapper())
+      ..interceptors.add(LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+      ))
       ..options.baseUrl = kBaseUrl;
   }
 

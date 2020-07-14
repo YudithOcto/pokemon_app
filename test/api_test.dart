@@ -3,17 +3,19 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokemon_app/api/api_helper.dart';
+import 'package:pokemon_app/injection_container.dart';
 import 'package:pokemon_app/model/pokemon_form_response_model.dart';
 import 'package:pokemon_app/model/pokemon_list_response_model.dart';
-
 import 'fake_response_model/response_model_reader.dart';
 
 void main() {
-  final Dio _dio = Dio();
   ApiHelperImpl apiSuitTest;
 
   setUp(() {
-    apiSuitTest = ApiHelperImpl(dio: _dio);
+    // Get It initialization here
+    initialization();
+    // Initialize api helper constructor
+    apiSuitTest = ApiHelperImpl(dio: singleton());
   });
 
   test('get pokemon list data with paging', () async {
