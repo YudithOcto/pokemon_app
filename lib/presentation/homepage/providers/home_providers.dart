@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:pokemon_app/api/api_helper.dart';
 import 'package:pokemon_app/api/state.dart';
 import 'package:pokemon_app/model/pokemon_form_response_model.dart';
@@ -30,15 +30,14 @@ class HomeProviders with ChangeNotifier {
       _pokemonList.clear();
       _offset = 0;
     }
+    if (!_canLoadMore) return;
     _streamController.add(apiState.loading);
-    final result =
-        await _apiProvider.getPokemonList('pokemon?limit=10&offset=$_offset');
+    final result = await _apiProvider.getPokemonList(_offset);
     if (result.message == null) {
       _canLoadMore = result.next != null;
       _offset += 10;
       transformListPokemonAndGetPokemonForms(result.results);
     }
-    notifyListeners();
   }
 
   transformListPokemonAndGetPokemonForms(List<PokemonModel> pokemonList) async {
@@ -46,24 +45,39 @@ class HomeProviders with ChangeNotifier {
     final data = listIds.map((e) => getPokemonForms(e)).toList();
     final futures = Future.wait(data);
     final _futuresResult = await futures;
-    _pokemonList.addAll(_futuresResult);
-    _streamController.add(apiState.success);
+    addColorsToPokemon(_futuresResult);
   }
 
+  addColorsToPokemon(List<PokemonFormResponseModel> model) async {
+    final data = model.map((e) async {
+      if (e.sprites != null && e.sprites.frontDefault != null) {
+        return await _paletteGenerator(e?.sprites?.frontDefault);
+      }
+      return null;
+    });
+    final listAddColor = Future.wait(data);
+    pokemonBackgroundColor.addAll(await listAddColor);
+    _pokemonList.addAll(model);
+    _streamController.add(apiState.success);
+    notifyListeners();
+  }
+
+  List<PaletteGenerator> pokemonBackgroundColor = [];
+
   Future<PokemonFormResponseModel> getPokemonForms(String id) async {
-    return await _apiProvider.getPokemonFormDetail('pokemon-form/$id');
+    return await _apiProvider.getPokemonFormDetail(id);
+  }
+
+  Future<PaletteGenerator> _paletteGenerator(String image) async {
+    PaletteGenerator _paletteGenerator =
+        await PaletteGenerator.fromImageProvider(NetworkImage(image),
+            size: Size(110, 50), maximumColorCount: 20);
+    return _paletteGenerator;
   }
 
   @override
   void dispose() {
     _streamController.close();
     super.dispose();
-  }
-}
-
-extension on String {
-  String get pokemonId {
-    print(this.split('/')[4]);
-    return this.split('/').join();
   }
 }

@@ -2,6 +2,10 @@
   "form_name":"plant",
   "name":"wormadam-plant",
   "message": null,
+  "pokemon":{
+    "name":"raichu",
+    "url":"https://pokeapi.co/api/v2/pokemon/26/"
+  },
   "sprites":{
     "front_default":"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/413-plant.png"
   }

@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:pokemon_app/model/pokemon_model.dart';
 
 class PokemonFormResponseModel with EquatableMixin {
   PokemonFormResponseModel({
@@ -6,18 +8,26 @@ class PokemonFormResponseModel with EquatableMixin {
     this.name,
     this.sprites,
     this.message,
+    this.pokemonModel,
+    this.pokemonColor,
   });
 
   String formName;
   String name;
   Sprites sprites;
   String message;
+  PokemonModel pokemonModel;
+  Color pokemonColor;
 
   factory PokemonFormResponseModel.fromJson(Map<String, dynamic> json) =>
       PokemonFormResponseModel(
         formName: json["form_name"],
         name: json["name"],
-        sprites: Sprites.fromJson(json["sprites"]),
+        pokemonModel: json['pokemon'] == null
+            ? null
+            : PokemonModel.fromJson(json['pokemon']),
+        sprites:
+            json['sprites'] == null ? null : Sprites.fromJson(json["sprites"]),
       );
 
   PokemonFormResponseModel.withError(String value) : message = value;

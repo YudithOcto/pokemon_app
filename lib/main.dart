@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_app/injection_container.dart' as di;
+import 'package:pokemon_app/presentation/detail/providers/pokemon_detail_provider.dart';
 import 'package:pokemon_app/presentation/homepage/home_page.dart';
 import 'package:pokemon_app/presentation/homepage/providers/home_providers.dart';
 import 'package:pokemon_app/routes.dart';
@@ -18,6 +19,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<HomeProviders>(
           create: (_) => HomeProviders(apiProvider: di.singleton()),
+        ),
+        ChangeNotifierProvider<PokemonDetailProvider>(
+          create: (_) => PokemonDetailProvider(apiHelper: di.singleton()),
         )
       ],
       child: MaterialApp(

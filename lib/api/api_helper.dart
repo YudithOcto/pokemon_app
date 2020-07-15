@@ -1,12 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pokemon_app/model/pokemon_detail_model.dart';
 import 'package:pokemon_app/utils/constant.dart';
 import 'package:pokemon_app/model/pokemon_form_response_model.dart';
 import 'package:pokemon_app/model/pokemon_list_response_model.dart';
 
 abstract class ApiHelper {
-  Future<PokemonListResponseModel> getPokemonList(String url);
-  Future<PokemonFormResponseModel> getPokemonFormDetail(String url);
+  Future<PokemonListResponseModel> getPokemonList(int offset);
+  Future<PokemonFormResponseModel> getPokemonFormDetail(String pokemonId);
+  Future<PokemonDetailModel> getPokemonDetail(String url);
 }
 
 class ApiHelperImpl extends ApiHelper {
@@ -19,10 +21,9 @@ class ApiHelperImpl extends ApiHelper {
   _getOptionRequest() async {
     dio
       ..options
-      ..options.receiveTimeout = 20000
-      ..options.connectTimeout = 20000
+      ..options.receiveTimeout = 10000
+      ..options.connectTimeout = 10000
       ..interceptors.add(LogInterceptor(
-        requestBody: true,
         responseBody: true,
       ))
       ..options.baseUrl = kBaseUrl;
@@ -59,9 +60,12 @@ class ApiHelperImpl extends ApiHelper {
   }
 
   @override
-  Future<PokemonListResponseModel> getPokemonList(String url) async {
+  Future<PokemonListResponseModel> getPokemonList(int offset) async {
     try {
-      final response = await dio.get(url);
+      final response = await dio.get('pokemon', queryParameters: {
+        'limit': 10,
+        'offset': offset,
+      });
       return PokemonListResponseModel.fromJson(response.data);
     } catch (error) {
       if (error is DioError) {
@@ -73,15 +77,30 @@ class ApiHelperImpl extends ApiHelper {
   }
 
   @override
-  Future<PokemonFormResponseModel> getPokemonFormDetail(String url) async {
+  Future<PokemonFormResponseModel> getPokemonFormDetail(
+      String pokemonId) async {
     try {
-      final response = await dio.get(url);
+      final response = await dio.get('pokemon-form/$pokemonId');
       return PokemonFormResponseModel.fromJson(response.data);
     } catch (error) {
       if (error is DioError) {
         return PokemonFormResponseModel.withError(_handleError(error));
       } else {
         return PokemonFormResponseModel.withError(error.toString());
+      }
+    }
+  }
+
+  @override
+  Future<PokemonDetailModel> getPokemonDetail(String url) async {
+    try {
+      final response = await dio.get(url);
+      return PokemonDetailModel.fromJson(response.data);
+    } catch (error) {
+      if (error is DioError) {
+        return PokemonDetailModel.withError(_handleError(error));
+      } else {
+        return PokemonDetailModel.withError(error.toString());
       }
     }
   }
