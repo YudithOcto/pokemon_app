@@ -36,6 +36,7 @@ abstract class ThemeText {
   static const TextStyle proximaBody = const TextStyle(
       fontFamily: 'Proxima',
       fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.w600,
       fontSize: 14.0,
       color: Colors.black);
 

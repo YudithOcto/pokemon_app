@@ -20,6 +20,7 @@ class HomeProviders with ChangeNotifier {
   List<PokemonFormResponseModel> get pokemonList => _pokemonList;
 
   int _offset = 0;
+  int get offset => _offset;
 
   bool _canLoadMore = true;
   bool get canLoadMore => _canLoadMore;
@@ -30,6 +31,7 @@ class HomeProviders with ChangeNotifier {
       _pokemonList.clear();
       _offset = 0;
     }
+    print(_canLoadMore);
     if (!_canLoadMore) return;
     _streamController.add(apiState.loading);
     final result = await _apiProvider.getPokemonList(_offset);
@@ -37,6 +39,9 @@ class HomeProviders with ChangeNotifier {
       _canLoadMore = result.next != null;
       _offset += 10;
       transformListPokemonAndGetPokemonForms(result.results);
+    } else {
+      _canLoadMore = false;
+      _streamController.add(apiState.empty);
     }
   }
 

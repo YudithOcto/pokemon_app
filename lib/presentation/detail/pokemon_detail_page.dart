@@ -5,7 +5,7 @@ import 'package:pokemon_app/presentation/detail/providers/pokemon_detail_provide
 import 'package:pokemon_app/presentation/detail/widgets/pokemon_basic_info_widget.dart';
 import 'package:pokemon_app/presentation/detail/widgets/pokemon_basic_stat_widget.dart';
 import 'package:pokemon_app/presentation/detail/widgets/pokemon_detail_header_widget.dart';
-import 'package:pokemon_app/utils/theme_colors.dart';
+import 'package:pokemon_app/presentation/shared_widgets/empty_widget.dart';
 import 'package:provider/provider.dart';
 
 class PokemonDetailPage extends StatefulWidget {
@@ -48,7 +48,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                 child: CircularProgressIndicator(),
               );
             } else {
-              if (snapshot.hasData && snapshot.data != null) {
+              if (snapshot.hasData && snapshot.data.message == null) {
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +69,20 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                   ),
                 );
               } else {
-                return Container();
+                return EmptyWidget(
+                  onRetry: () {
+                    final routeArgs = ModalRoute.of(context).settings.arguments
+                        as Map<String, dynamic>;
+                    if (routeArgs != null) {
+                      _getPokemonDetail = Provider.of<PokemonDetailProvider>(
+                              context,
+                              listen: false)
+                          .getPokemonDetail(
+                              routeArgs[PokemonDetailPage.pokemonDetailUrl]);
+                      setState(() {});
+                    }
+                  },
+                );
               }
             }
           }),

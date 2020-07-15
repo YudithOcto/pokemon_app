@@ -3,6 +3,7 @@ import 'package:pokemon_app/api/state.dart';
 import 'package:pokemon_app/presentation/homepage/providers/home_providers.dart';
 import 'package:pokemon_app/presentation/homepage/widgets/home_page_header_widget.dart';
 import 'package:pokemon_app/presentation/homepage/widgets/home_page_single_pokemon_content_widget.dart';
+import 'package:pokemon_app/presentation/shared_widgets/empty_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -54,9 +55,18 @@ class _HomePageState extends State<HomePage> {
                     stream:
                         Provider.of<HomeProviders>(context).pokemonListStream,
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
+                      print(snapshot);
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          (Provider.of<HomeProviders>(context).offset < 1 &&
+                              snapshot.data == apiState.loading)) {
+                        return Container(
+                          alignment: FractionalOffset.center,
+                          margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.3),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(),
+                          ),
                         );
                       } else {
                         final provider = Provider.of<HomeProviders>(context);
@@ -65,8 +75,14 @@ class _HomePageState extends State<HomePage> {
                           physics: ClampingScrollPhysics(),
                           itemCount: provider.pokemonList.length + 1,
                           itemBuilder: (context, index) {
-                            if (provider.pokemonList.isEmpty) {
-                              return Container();
+                            if (snapshot.data == apiState.empty) {
+                              return EmptyWidget(
+                                onRetry: () {
+                                  Provider.of<HomeProviders>(context,
+                                          listen: false)
+                                      .getPokemonList(isRefresh: true);
+                                },
+                              );
                             } else if (index < provider.pokemonList.length) {
                               final pokemon = provider.pokemonList[index];
                               return HomePageSinglePokemonContentWidget(

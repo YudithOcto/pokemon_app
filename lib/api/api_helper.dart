@@ -21,8 +21,8 @@ class ApiHelperImpl extends ApiHelper {
   _getOptionRequest() async {
     dio
       ..options
-      ..options.receiveTimeout = 10000
-      ..options.connectTimeout = 10000
+      ..options.receiveTimeout = 20000
+      ..options.connectTimeout = 20000
       ..interceptors.add(LogInterceptor(
         responseBody: true,
       ))
